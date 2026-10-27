@@ -17,6 +17,10 @@ _Add a phone screenshot of the live stream in the browser here._
 
 - ESP32-CAM module
 
+## Security note
+
+The sketch sets the hotspot SSID and password in the `ssid` and `password` defines near the top of the file. Change them before flashing - anyone connected to the hotspot can open the stream.
+
 ## Status
 
 Working and in active development - more features are being added on top of the streaming base.
