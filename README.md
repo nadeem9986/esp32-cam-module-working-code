@@ -8,7 +8,7 @@ _Add a phone screenshot of the live stream in the browser here._
 
 ## How it works
 
-1. Flash the code to the ESP32-CAM.
+1. Copy `credentials.example.h` to `credentials.h` and set your own hotspot name and a strong password (8+ characters), then flash the code to the ESP32-CAM.
 2. Power it up - it starts a Wi-Fi hotspot.
 3. Connect your phone or laptop to that hotspot.
 4. Open the printed IP address in a browser to watch the live stream.
@@ -19,7 +19,7 @@ _Add a phone screenshot of the live stream in the browser here._
 
 ## Security note
 
-The sketch sets the hotspot SSID and password in the `ssid` and `password` defines near the top of the file. Change them before flashing - anyone connected to the hotspot can open the stream.
+The hotspot credentials live in `credentials.h`, which is git-ignored so real values never land in the repo. Set your own before flashing - anyone connected to the hotspot can open the stream.
 
 ## Status
 
