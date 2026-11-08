@@ -2,8 +2,11 @@
 #include "esp_camera.h"
 #include <WebServer.h>
 
-#define SSID "ESP32-CAM-HOTSPOT"
-#define PWD  "12345678"
+// Wi-Fi hotspot credentials live in credentials.h (git-ignored).
+// Copy credentials.example.h to credentials.h and set your own values.
+#include "credentials.h"
+#define SSID WIFI_SSID
+#define PWD  WIFI_PASSWORD
 #define LED_GPIO 4
 
 // AI-Thinker Camera Pins
