@@ -29,6 +29,7 @@
 
 WebServer server(80);
 bool ledState = false;
+bool cameraReady = false;
 
 void setupWiFi() {
   WiFi.softAP(SSID, PWD);
@@ -66,8 +67,10 @@ void setupCamera() {
   esp_err_t err = esp_camera_init(&config);
   if (err != ESP_OK) {
     Serial.printf("Camera init failed 0x%x", err);
+    cameraReady = false;
     return;
   }
+  cameraReady = true;
 }
 
 void handleRoot() {
@@ -83,7 +86,7 @@ void handleRoot() {
             font-family: Arial;
           }
           img {
-            width: 95%%;
+            width: 95%;
             max-width: 480px;
             border-radius: 10px;
             box-shadow: 0 0 20px #000;
@@ -120,24 +123,31 @@ void handleRoot() {
 }
 
 void handleStream() {
+  if (!cameraReady) {
+    server.send(503, "text/plain", "Camera unavailable");
+    return;
+  }
+
   WiFiClient client = server.client();
   String response = "HTTP/1.1 200 OK\r\n";
   response += "Content-Type: multipart/x-mixed-replace; boundary=frame\r\n\r\n";
   server.sendContent(response);
 
-  while (1) {
+  int failures = 0;
+  while (client.connected()) {
     camera_fb_t *fb = esp_camera_fb_get();
     if (!fb) {
       Serial.println("Camera capture failed");
+      if (++failures >= 10) break;  // give up instead of spinning forever
+      delay(100);                   // yield, or the watchdog resets the board
       continue;
     }
+    failures = 0;
     response = "--frame\r\nContent-Type: image/jpeg\r\n\r\n";
     server.sendContent(response);
     server.sendContent((const char *)fb->buf, fb->len);
     server.sendContent("\r\n");
     esp_camera_fb_return(fb);
-
-    if (!client.connected()) break;
   }
 }
 
